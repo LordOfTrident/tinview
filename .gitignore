@@ -1,0 +1,6 @@
+./tinview
+obj
+src/baked_error.inc
+src/baked_icon.inc
+src/baked_filtering.inc
+src/baked_loading.inc
