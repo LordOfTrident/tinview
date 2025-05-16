@@ -1,0 +1,148 @@
+.TH tinview 1 2025-05-14
+
+.SH NAME
+tinview \- A minimalist image viewer
+
+.SH SYNOPSIS
+\fBtinview\fR [\fIFILE\fR...] [\fB\-h\fR | \fB\-\-help\fR] [\fB\-v\fR | \fB\-\-version\fR] [\fB\-d\fR \fIDIR\fR | \fB\-\-dir\fR \fIDIR\fR]
+
+.SH DESCRIPTION
+\fBtinview\fR is a lightweight and minimalist image viewer for Linux. It supports JPG, PNG, BMP,
+HDR, TGA, PIC, PSD, PGM, and PPM images, as well as animated GIFs.
+.P
+When opened, all images passed by command line arguments can be browsed, as well as all images in
+the browsing directory. The browsing directory is the parent directory of the first image provided
+through command line arguments. If no files were provided, the current working directory is used.
+Images are sorted by their names/paths in alphabetical order from A to Z.
+
+.SH OPTIONS
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Prints the usage and version information.
+.TP
+\fB\-v\fR, \fB\-\-version\fR
+Prints the version.
+.TP
+\fB\-d\fR \fIDIR\fR, \fB\-\-dir\fR \fIDIR\fR
+Sets the image browsing directory to \fIDIR\fR.
+
+.SH CONTROLS
+.TP
+\fBEscape\fR
+Quit the program.
+.TP
+\fBF11\fR
+Toggle fullscreen.
+.TP
+\fBSpace\fR
+Switch between filtering modes (auto, linear and nearest).
+.TP
+\fBLeft arrow\fR
+Go to the previous image.
+.TP
+\fBRight arrow\fR
+Go to the next image.
+.TP
+\fB1\-9\fR
+Set the zoom to a value from 1 to 9.
+.TP
+\fBCtrl+1\-9\fR
+Set the zoom to the reciprocal of a value from 1 to 9.
+.TP
+\fBLeft click and drag\fR
+Move the image around.
+.TP
+\fBDouble\-click\fR
+Reset the zoom and camera position.
+.TP
+\fBScroll up\fR
+Zoom in.
+.TP
+\fBScroll down\fR
+Zoom out.
+
+.SH CUSTOMIZATION
+\fBtinview\fR can be customized in \fI\%$HOME/.config/tinview/config.ini\fR. If the file doesn't
+exist, it's created automatically and filled with default configuration as a starting point for the
+user. See list of customization options below:
+
+.SS
+\fB[window]\fR
+.TP
+\fBfullscreen\fR = <true | false>
+Enable/disable fullscreen on startup.
+.TP
+\fBsize.startup\fR = <\fIINTEGER\fR>x<\fIINTEGER\fR>
+Set the size of the window on startup.
+.TP
+\fBsize.min\fR = <\fIINTEGER\fR>x<\fIINTEGER\fR>
+Set the minimum size of the window.
+
+.SS
+\fB[camera]\fR
+.TP
+\fBdamping\fR = <\fINUMBER\fR>
+Set the damping for camera movement and zooming. The value is from 0 to 1 (more than 1 will always
+be set to 1), and it represents the percentage by which the zoom and camera movement will progress
+to their next value in a millisecond. For example, 1 would make it instant, and 0.02 would make it
+smoother.
+.TP
+\fBzoom.max\fR = <\fINUMBER\fR>
+Set the maximum zoom value.
+.TP
+\fBzoom.min\fR = <\fINUMBER\fR>
+Set the minimum zoom value.
+.TP
+\fBzoom.in\fR = <\fINUMBER\fR>
+Set the value by which the view zooms in.
+.TP
+\fBzoom.out\fR = <\fINUMBER\fR>
+Set the value by which the view zooms out.
+
+.SS
+\fB[image]\fR
+.TP
+\fBanim\-time\fR = <\fINUMBER\fR>
+Set the length of the image transition animation (in milliseconds).
+.TP
+\fBfiltering\fR = <auto | linear | nearest>
+Set the filtering mode of the image. \fIauto\fR applies linear filtering when zoomed out and
+nearest filtering when zoomed in.
+.TP
+\fBborder\fR = <shadow/outline/none>
+Set the border of the image.
+.TP
+\fBfit\-on\-resize\fR = <default | integer | none>
+Set the mode by which the image is fit into the window on resize. \fIinteger\fR fits it by integer
+values if the scale is above 1. \fInone\fR does nothing on resize.
+
+.SS
+\fB[colors]\fR
+.TP
+\fBcheckerboard.a\fR = <\fIRGBA\fR>
+Set the color of the first checkerboard color.
+.TP
+\fBcheckerboard.b\fR = <\fIRGBA\fR>
+Set the color of the second checkerboard color.
+.TP
+\fBicons\fR = <\fIRGBA\fR>
+Set the color of icons.
+.TP
+\fBdarkening\fR = <\fIRGBA\fR>
+Set the color of window darkening.
+.TP
+\fBoutline\fR = <\fIRGBA\fR>
+Set the color of the image outline border. Ignored if image border is not outline.
+
+.SS
+\fB[controls]\fR
+.TP
+\fBdouble\-click\-time\fR = <\fINUMBER\fR>
+Set the delay time for double\-click (in milliseconds).
+
+.SH LICENSE
+\fBtinview\fR is licensed under the GNU General Public License version 3.0
+
+.SH BUGS
+If you find any bugs, please, report them at
+\fI\%https://github.com/lordoftrident/tinview/issues\fR.
