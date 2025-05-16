@@ -1,4 +1,4 @@
-z<a name="readme-top"></a>
+<a name="readme-top"></a>
 <div align="center">
 	<a href="./LICENSE">
 		<img alt="License" src="https://img.shields.io/badge/license-GPL v3-e8415e?style=for-the-badge">
