@@ -12,8 +12,9 @@ HDR, TGA, PIC, PSD, PGM, and PPM images, as well as animated GIFs.
 .P
 When opened, all images passed by command line arguments can be browsed, as well as all images in
 the browsing directory. The browsing directory is the parent directory of the first image provided
-through command line arguments. If no files were provided, the current working directory is used.
-Images are sorted by their names/paths in alphabetical order from A to Z.
+through command line arguments. If no files were provided and stdin is not redirected or piped, the
+current working directory is used. If stdin is redirected or piped, the program reads image data
+from it. Images are sorted by their names/paths in alphabetical order from A to Z.
 
 .SH OPTIONS
 .TP

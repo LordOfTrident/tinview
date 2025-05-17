@@ -6,7 +6,7 @@
 #include <libgen.h>       // dirname
 #include <linux/limits.h> // PATH_MAX
 
-#define VERSION "1.0.0"
+#define VERSION "1.0.1"
 
 #include "common.h"
 #include "config.h"

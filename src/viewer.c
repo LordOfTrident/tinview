@@ -295,14 +295,15 @@ static void render(void) {
 }
 
 static void updateWindowTitle(void) {
-	const char *path = img->path;
 	static char title[PATH_MAX + 32];
-	if (*path == 0) {
-		SDL_SetWindowTitle(win, TITLE);
-		return;
-	}
 	if (waiting) strcpy(title, TITLE" - (...) ");
 	else sprintf(title, TITLE" - (%ix%i) ", img->w, img->h);
+
+	const char *path = img->path;
+	if (*path == 0) {
+		SDL_SetWindowTitle(win, title);
+		return;
+	}
 
 	// Shorten path by current working directory path
 	char cwd[PATH_MAX];
