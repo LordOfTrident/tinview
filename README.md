@@ -16,8 +16,7 @@
 		<img alt="Pull requests" src="https://img.shields.io/github/issues-pr/LordOfTrident/tinview?style=for-the-badge&color=4f79e4">
 	</a>
 	<br><br><br>
-	<img src="./res/icon.png" width="150px">
-	<h1 align="center">tinview</h1>
+	<img src="./res/thumbnail.png" width="70%">
 	<p align="center">A pretty and minimalist Linux image viewer</p>
 	<p align="center">
 		<a href="#usage">Usage</a>
@@ -112,6 +111,8 @@ If you find any bugs, please, [create an issue and report them](https://github.c
 <br>
 
 <div align="center">
+	<img src="./res/icon.png" width="100px">
+	<br>
 	<a href="https://en.wikipedia.org/wiki/C_(programming_language)">
 		<img alt="C99" src="https://img.shields.io/badge/C99-0069a9?style=for-the-badge&logo=c&logoColor=white">
 	</a>
