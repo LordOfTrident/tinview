@@ -1,7 +1,7 @@
 #ifndef LOADER_H_HEADER_GUARD
 #define LOADER_H_HEADER_GUARD
 
-#include <stdio.h>        // fopen, fclose, stdin
+#include <stdio.h>        // fopen, fclose, stdin, fseek, ftell, rewind, fread, fgetc
 #include <stdlib.h>       // realpath
 #include <stdbool.h>      // bool, true, false
 #include <stdint.h>       // uint8_t, uint64_t
@@ -18,6 +18,7 @@
 #include <linux/limits.h> // PATH_MAX
 
 #include <stb_image.h>
+#include <lz4/lz4file.h>
 #include <webp/decode.h>
 // TODO: libwebp caused tinview size to go from around 100k to 500k
 

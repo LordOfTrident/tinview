@@ -49,40 +49,162 @@ bool isImageLoaded(Image *img) {
 	return tmp;
 }
 
-// Annoying, but threads can only take data that's either global or heap-allocated
-typedef struct {
-	Image *img;
-	Buffer buf;
-} ImageThreadData;
+#define BUFCHUNKSZ (256*256)
+
+static Error readFileAtOnce(FILE *f, uint8_t **buf, size_t *sz) {
+	fseek(f, 0, SEEK_END);
+	long sz_ = ftell(f);
+	if (sz_ == -1) return strerror(errno);
+	rewind(f);
+
+	*sz  = sz_;
+	*buf = alloc(uint8_t, *sz);
+	if (fread(*buf, 1, *sz, f) < *sz) {
+		free(*buf);
+		return "fread() fail";
+		// Apparently, fread setting errno is a POSIX extension, and GNU doesn't follow it
+		//return strerror(errno);
+	}
+	return NULL;
+}
+
+static Error readFileByChunks(FILE *f, uint8_t **buf, size_t *sz) {
+	int    byte;
+	size_t cap = BUFCHUNKSZ;
+	*sz  = 0;
+	*buf = alloc(uint8_t, cap);
+	while ((byte = fgetc(f)) != EOF) {
+		if (*sz >= cap) resize(*buf, cap *= 2);
+		(*buf)[(*sz)++] = byte;
+	}
+	if (ferror(f)) {
+		free(*buf);
+		return strerror(errno); // fgetc should set errno, right?
+	}
+
+	// Make sure buffer is not too big
+	if (*sz != cap) resize(*buf, *sz);
+	return NULL;
+}
 
 #define imgError(IMG, ERR) ((IMG)->err = ERR)
 
-static void decodeBuffer(Buffer *buf, Image *img) {
-	img->isGif = false;
-	// TODO: Support https://platinumsrc.github.io/docs/formats/ptf/
+static uint8_t *imageReadFile(Image *img, FILE *f, size_t *sz) {
+	// ftell doesn't work with piping, so we have to read by chunks for stdin
+	uint8_t *buf;
+	Error    err = f == stdin? readFileByChunks(f, &buf, sz) : readFileAtOnce(f, &buf, sz);
+	if (err != NULL) {
+		imgError(img, err);
+		return NULL;
+	}
+	return buf;
+}
 
-	// Try decode as webp
-	if ((img->pxs = WebPDecodeRGBA(buf->raw, buf->sz, &img->w, &img->h)) != NULL) return;
+static void decodeWebp(FILE *f, Image *img) {
+	size_t   sz;
+	uint8_t *buf = imageReadFile(img, f, &sz);
+	if (buf == NULL) return;
+	if ((img->pxs = WebPDecodeRGBA(buf, sz, &img->w, &img->h)) == NULL)
+		imgError(img, "Failed to load WEBP");
+	free(buf);
+}
 
-	// Try decode as gif
-	if ((img->pxs = stbi_load_gif_from_memory(buf->raw, buf->sz, &img->delays, &img->w, &img->h,
-	                                          &img->len, NULL, 4)) != NULL) {
-		img->isGif = true;
+static void decodeGif(FILE *f, Image *img) {
+	size_t   sz;
+	uint8_t *buf = imageReadFile(img, f, &sz);
+	if (buf == NULL) return;
+	if ((img->pxs = stbi_load_gif_from_memory(buf, sz, &img->delays, &img->w, &img->h,
+	                                          &img->len, NULL, 4)) != NULL) img->isGif = true;
+	else imgError(img, stbi_failure_reason());
+	free(buf);
+}
+
+// https://platinumsrc.github.io/docs/formats/ptf/
+// https://github.com/PlatinumSrc/PlatinumSrc/blob/master/src/psrc/engine/ptf.c
+static void decodePtf(FILE *f, Image *img) {
+	// Skip magic bytes, because we already checked them before calling decodePtf
+	fgetc(f); fgetc(f); fgetc(f); fgetc(f);
+	int x = fgetc(f), r = fgetc(f);
+	if (x == EOF || r == EOF) {
+		imgError(img, "Invalid PTF");
+		return;
+	}
+	unsigned w = 1 << (r & 0xF), h = 1 << (r >> 4), ch = (x & 1) + 3, sz = w*h;
+	img->w = w;
+	img->h = h;
+
+	LZ4_readFile_t  *ctx;
+	LZ4F_errorCode_t err;
+	if (LZ4F_isError(err = LZ4F_readOpen(&ctx, f))) {
+		imgError(img, LZ4F_getErrorName(err));
 		return;
 	}
 
-	// Try decode as other formats
-	if ((img->pxs = stbi_load_from_memory(buf->raw, buf->sz, &img->w, &img->h, NULL, 4)) != NULL)
+	uint8_t *pxs = alloc(uint8_t, sz*ch);
+	if (LZ4F_isError(err = LZ4F_read(ctx, pxs, sz*ch))) {
+		LZ4F_readClose(ctx);
+		free(pxs);
+		imgError(img, LZ4F_getErrorName(err));
 		return;
-	imgError(img, stbi_failure_reason());
+	}
+	LZ4F_readClose(ctx);
+
+	img->pxs = alloc(uint8_t, sz*4);
+	for (unsigned i = 0; i < sz; ++ i) {
+		img->pxs[i*4]     = pxs[i*ch];
+		img->pxs[i*4 + 1] = pxs[i*ch + 1];
+		img->pxs[i*4 + 2] = pxs[i*ch + 2];
+		img->pxs[i*4 + 3] = ch == 4? pxs[i*ch + 3] : 0xFF;
+	}
+	free(pxs);
 }
 
+// JPG, PNG, BMP, WEBP, HDR, TGA, PIC, PSD, PGM, PPM
+static void decodeOther(FILE *f, Image *img) {
+	if ((img->pxs = stbi_load_from_file(f, &img->w, &img->h, NULL, 4)) == NULL)
+		imgError(img, stbi_failure_reason());
+}
+
+static Error getMagic(FILE *f, uint8_t *magic) {
+	if (fread(magic, 1, 4, f) < 4) return "Invalid image file (failed to read magic bytes)";
+	rewind(f);
+	return NULL;
+}
+
+#define magicEquals3(M, A, B, C) (*(M) == (A) && (M)[1] == (B) && (M)[2] == (C))
+#define magicEquals4(M, A, B, C, D) (magicEquals3(M, A, B, C) && (M)[3] == (D))
+
+#define isWebpMagic(M) magicEquals4(M, 'R', 'I', 'F', 'F')
+#define isGifMagic(M)  magicEquals3(M, 'G', 'I', 'F')
+#define isPtfMagic(M)  magicEquals4(M, 'P', 'T', 'F', 0)
+
+static void decodeImg(FILE *f, Image *img) {
+	img->isGif = false;
+	uint8_t magic[4];
+	Error err = getMagic(f, magic);
+	if (err != NULL) {
+		imgError(img, err);
+		return;
+	}
+
+	if      (isWebpMagic(magic)) decodeWebp(f, img);
+	else if (isGifMagic(magic))  decodeGif(f, img);
+	else if (isPtfMagic(magic))  decodePtf(f, img);
+	else decodeOther(f, img);
+}
+
+// Annoying, but threads can only take data that's either global or heap-allocated
+typedef struct {
+	Image *img;
+	FILE  *f;
+} ImageThreadData;
+
 static void *imageLoadingThread(void *data) {
-	Image  *img =  ((ImageThreadData*)data)->img;
-	Buffer *buf = &((ImageThreadData*)data)->buf;
-	decodeBuffer(buf, img);
-	freeBuffer(buf);
+	Image *img = ((ImageThreadData*)data)->img;
+	FILE  *f   = ((ImageThreadData*)data)->f;
  	free(data);
+ 	decodeImg(f, img);
+	fclose(f);
 	if (img->err == NULL && (img->w <= 0 || img->h <= 0)) imgError(img, "Invalid image dimensions");
 
 	lockImage(img);
@@ -96,7 +218,7 @@ static void *imageLoadingThread(void *data) {
 	return NULL;
 }
 
-static void startLoadingThread(Image *img, Buffer *buf) {
+static void startLoadingThread(Image *img, FILE *f) {
 	assert(!isImageLoading(img));
 
 	if (img->loaded) unloadImage(img);
@@ -104,8 +226,8 @@ static void startLoadingThread(Image *img, Buffer *buf) {
 	img->loading = true;
 
 	ImageThreadData *data = alloc(ImageThreadData, 1);
-	data->img =  img;
-	data->buf = *buf;
+	data->img = img;
+	data->f   = f;
 	int err = pthread_create(&img->thread, NULL, imageLoadingThread, data);
 	if (err != 0) die("Failed to start image loading thread: %s", strerror(err));
 }
@@ -119,16 +241,25 @@ static bool isPathAnImage(const char *path) {
 	FILE *f = fopen(path, "rb");
 	if (f == NULL) return false;
 
-	Buffer buf;
-	Error  err = readToBufferAtOnce(&buf, f);
+// This makes me wish C had defer
+#define fcloseAndReturn(VAL) do { fclose(f); return VAL; } while (0)
+
+	uint8_t magic[4];
+	if (getMagic(f, magic) != NULL) fcloseAndReturn(false);
+	if (isPtfMagic(magic)) fcloseAndReturn(true);
+
+	uint8_t *buf;
+	size_t   sz;
+	if (readFileAtOnce(f, &buf, &sz) != NULL) fcloseAndReturn(false);
 	fclose(f);
-	if (err != NULL) return false;
+
+#undef fcloseAndReturn
 
 	/* If we can't even read the size of the image, we assume it is either not an image, or so
 	   corrupted that we just won't classify it as an image */
-	bool isImg = stbi_info_from_memory(buf.raw, buf.sz, NULL, NULL, NULL) ||
-	             WebPGetInfo(buf.raw, buf.sz, NULL, NULL);
-	freeBuffer(&buf);
+	bool isImg = stbi_info_from_memory(buf, sz, NULL, NULL, NULL) ||
+	             WebPGetInfo(buf, sz, NULL, NULL);
+	free(buf);
 	return isImg;
 }
 
@@ -143,26 +274,11 @@ void loadImage(Image *img) {
 		imgError(img, strerror(errno));
 		return;
 	}
-
-	Buffer buf;
-	Error  err = readToBufferAtOnce(&buf, f);
-	if (err != NULL) {
-		imgError(img, err);
-		fclose(f);
-		return;
-	}
-	fclose(f);
-	startLoadingThread(img, &buf);
+	startLoadingThread(img, f);
 }
 
 void loadImageFromStdin(Image *img) {
-	Buffer buf;
-	Error  err = readToBufferByChunks(&buf, stdin); // ftell doesn't work with piping
-	if (err != NULL) {
-		imgError(img, err);
-		return;
-	}
-	startLoadingThread(img, &buf);
+	startLoadingThread(img, stdin);
 }
 
 void unloadImage(Image *img) {
@@ -312,13 +428,12 @@ Error watchImages(Images *imgs) {
 	if (ioctl(imgs->fd, FIONREAD, &sz) == -1) return strerror(errno);
 	if (sz == 0) return NULL;
 
-	Buffer buf;
-	initBuffer(&buf, sz);
-	if (read(imgs->fd, buf.raw, buf.sz) == -1) return strerror(errno);
+	uint8_t *buf = alloc(uint8_t, sz);
+	if (read(imgs->fd, buf, sz) == -1) return strerror(errno);
 
 	struct inotify_event *e;
-	for (size_t off = 0; off < buf.sz; off += sizeof(*e) + e->len) {
-		e = (struct inotify_event*)(buf.raw + off);
+	for (int off = 0; off < sz; off += sizeof(*e) + e->len) {
+		e = (struct inotify_event*)(buf + off);
 		char path[PATH_MAX];
 		if (e->mask & IN_CLOSE_WRITE) {
 			normalizeImagePath(e->name, path);
@@ -343,6 +458,6 @@ Error watchImages(Images *imgs) {
 			removeImage(imgs, idx);
 		}
 	}
-	freeBuffer(&buf);
+	free(buf);
 	return NULL;
 }

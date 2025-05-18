@@ -515,7 +515,7 @@ static void updateGif(void) {
 	if ((gifTimer += dt) > img->delays[gifFrame]) {
 		gifTimer = 0;
 		if (++gifFrame >= img->len) gifFrame = 0;
-		SDL_UpdateTexture(imgTex, NULL, img->pxs + img->w*img->h*gifFrame, img->w*4);
+		SDL_UpdateTexture(imgTex, NULL, img->pxs + img->w*img->h*gifFrame*4, img->w*4);
 	}
 }
 

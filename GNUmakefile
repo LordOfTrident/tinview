@@ -8,12 +8,13 @@ MANINSTALL  := /usr/share/man/man1/tinview.1
 XDGINSTALL  := /usr/share/applications/tinview.desktop
 ICONINSTALL := /usr/share/pixmaps/tinview.png
 
-OUT   := tinview
-SRC   := $(wildcard $(SRCDIR)/*.c)
-DEP   := $(wildcard $(SRCDIR)/*.h)
-OBJ   := $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRC))
-BAKED := $(wildcard $(BAKEDDIR)/*.png)
-INC   := $(patsubst $(BAKEDDIR)/%.png,$(SRCDIR)/baked_%.inc,$(BAKED))
+OUT    := tinview
+SRC    := $(wildcard $(SRCDIR)/*.c)
+DEP    := $(wildcard $(SRCDIR)/*.h)
+OBJ    := $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SRC))
+BAKED  := $(wildcard $(BAKEDDIR)/*.png)
+INC    := $(patsubst $(BAKEDDIR)/%.png,$(SRCDIR)/baked_%.inc,$(BAKED))
+LZ4SRC := $(wildcard $(LIBDIR)/lz4/*.c)
 
 CFLAGS = -pedantic -Wpedantic -Wshadow -Wvla -Wuninitialized -Wundef -Wno-deprecated-declarations \
          -Wall -Wextra -std=c99 -I./$(LIBDIR) -D_POSIX_C_SOURCE -D_DEFAULT_SOURCE
@@ -29,7 +30,7 @@ debug: LDFLAGS += -fsanitize=address
 debug: $(OUT)
 
 $(OUT): $(INC) $(OBJDIR) $(OBJ) $(SRC)
-	$(CC) -o $(OUT) $(CFLAGS) $(OBJ) $(LDFLAGS)
+	$(CC) $(LZ4SRC) -o $(OUT) $(CFLAGS) $(OBJ) $(LDFLAGS)
 
 $(SRCDIR)/baked_%.inc: $(BAKEDDIR)/%.png
 	xxd -i $< $@

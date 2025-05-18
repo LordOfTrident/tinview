@@ -8,7 +8,7 @@
 #include <errno.h>        // errno
 #include <assert.h>       // assert
 #include <stdarg.h>       // va_start, va_end
-#include <stdio.h>        // fprintf, stderr, vsnprintf, fseek, ftell, rewind, fread, fgetc
+#include <stdio.h>        // fprintf, stderr, vsnprintf
 #include <stdint.h>       // uint8_t
 #include <time.h>         // time, localtime
 #include <linux/limits.h> // PATH_MAX
@@ -31,17 +31,5 @@ void *alloc_(size_t sz);
 void *resize_(void *ptr, size_t sz);
 
 const char *home(void);
-
-typedef struct {
-	uint8_t *raw;
-	size_t   sz;
-} Buffer;
-
-#define BUFCHUNKSZ (256*256)
-
-void  initBuffer(Buffer *buf, size_t sz);
-Error readToBufferAtOnce(Buffer *buf, FILE *f);
-Error readToBufferByChunks(Buffer *buf, FILE *f);
-void  freeBuffer(Buffer *buf);
 
 #endif
