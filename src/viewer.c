@@ -231,6 +231,7 @@ static void renderImage(void) {
 		.w = img->w*scale,
 		.h = img->h*scale,
 	};
+	// TODO: Smooth image rotation animation?
 	SDL_RenderCopyEx(ren, imgTex, NULL, &r, img->rot*90, NULL,
 	                 SDL_FLIP_VERTICAL*img->flipv | SDL_FLIP_HORIZONTAL*img->fliph);
 
@@ -575,7 +576,6 @@ static bool isStdinRedirectedOrPiped(void) {
 }
 
 void view(const char *browsePath, const char **paths, int count) {
-	// TODO: Image rotation and flipping, but only for viewing, no modifying of the file
 	// TODO: Copying images into clipboard with CTRL+C
 
 	setup(browsePath);
