@@ -4,7 +4,7 @@
 #include <stdio.h>        // fopen, fclose, stdin
 #include <stdlib.h>       // realpath
 #include <stdbool.h>      // bool, true, false
-#include <stdint.h>       // uint32_t, uint64_t
+#include <stdint.h>       // uint8_t, uint64_t
 #include <string.h>       // strerror, strcpy, strcat
 #include <ctype.h>        // isalpha, tolower
 #include <errno.h>        // errno
@@ -18,17 +18,18 @@
 #include <linux/limits.h> // PATH_MAX
 
 #include <stb_image.h>
+#include <webp/decode.h>
 
 #include "common.h"
 
 #define IMGSTDIN ""
 
 typedef struct {
-	char      path[PATH_MAX];
-	int       w, h;
-	uint32_t *pxs;
-	bool      isGif;
-	int      *delays, len; // Only for gifs
+	char     path[PATH_MAX];
+	int      w, h;
+	uint8_t *pxs;
+	bool     isGif;
+	int     *delays, len; // Only for gifs
 
 	/* loading        - Image is currently being loaded in a thread
 	 * loaded         - Image loading has succesfully finished

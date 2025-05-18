@@ -66,7 +66,7 @@ static SDL_Texture *createTexture(int w, int h, bool filtering) {
 }
 
 static void loadBaked(Baked *baked, uint8_t *raw, int sz) {
-	uint32_t *pxs = (uint32_t*)stbi_load_from_memory(raw, sz, &baked->w, &baked->h, NULL, 4);
+	uint8_t *pxs = stbi_load_from_memory(raw, sz, &baked->w, &baked->h, NULL, 4);
 	if (pxs == NULL) die("Failed to load baked asset: %s", stbi_failure_reason());
 
 	baked->tex = createTexture(baked->w, baked->h, true);
@@ -83,9 +83,8 @@ static void setCursor(SDL_Cursor *cursor) {
 }
 
 static void loadWindowIcon(void) {
-	int       w, h;
-	uint32_t *pxs = (uint32_t*)stbi_load_from_memory(baked_icon_png, sizeof(baked_icon_png),
-	                                                 &w, &h, NULL, 4);
+	int      w, h;
+	uint8_t *pxs = stbi_load_from_memory(baked_icon_png, sizeof(baked_icon_png), &w, &h, NULL, 4);
 	if (pxs == NULL) die("Failed to load baked window icon asset: %s", stbi_failure_reason());
 
 	SDL_Surface *surf = SDL_CreateRGBSurfaceFrom(pxs, w, h, 32, w*4,
@@ -344,6 +343,9 @@ static void setZoom(double z, double ox, double oy) {
 
 	// Can't recreate image texture if the image isn't available
 	if (!isImageAvailable()) return;
+	/* TODO: recreateImageTexture() is slower with big images (for example 4285x5712), so there
+	         might be a weird jump between zoom < 1 and zoom > 1. Fix this somehow? Maybe with
+	         OpenGL I won't have to recreate the texture to change filtering? */
 	if (filter == FILTERAUTO && (prevZoom > 1) != (zoom > 1)) recreateImageTexture();
 }
 
@@ -432,8 +434,8 @@ static void event(SDL_Event *e) {
 			switch (key) {
 			case SDLK_ESCAPE: quit = true; break;
 			case SDLK_F11:    fullscreen(fullscr = !fullscr); break;
-			case SDLK_LEFT:   nextImage(-1); break;
-			case SDLK_RIGHT:  nextImage(1);  break;
+			case SDLK_LEFT:   nextImage(-1);   break;
+			case SDLK_RIGHT:  nextImage(1);    break;
 			case SDLK_SPACE:
 				if (isImageAvailable()) {
 					if (++filter >= FILTERCOUNT) filter = 0;
@@ -480,6 +482,7 @@ static void event(SDL_Event *e) {
 	case SDL_MOUSEWHEEL:
 		setZoom(zoom + (double)e->wheel.y*zoom*(e->wheel.y > 0? conf.cam.zoomIn : conf.cam.zoomOut),
 		        mx - winw/2, my - winh/2);
+		printf("%f\n", zoom);
 		break;
 	case SDL_DROPFILE:
 		if (!*e->drop.file) break; // Broken on my system, so this prevents it from crashing

@@ -1,6 +1,7 @@
 OBJDIR   := obj
 SRCDIR   := src
 BAKEDDIR := baked
+LIBDIR   := lib
 
 APPINSTALL  := /usr/bin/tinview
 MANINSTALL  := /usr/share/man/man1/tinview.1
@@ -15,8 +16,8 @@ BAKED := $(wildcard $(BAKEDDIR)/*.png)
 INC   := $(patsubst $(BAKEDDIR)/%.png,$(SRCDIR)/baked_%.inc,$(BAKED))
 
 CFLAGS = -pedantic -Wpedantic -Wshadow -Wvla -Wuninitialized -Wundef -Wno-deprecated-declarations \
-         -Wall -Wextra -std=c99 -I./lib -D_POSIX_C_SOURCE -D_DEFAULT_SOURCE
-LDFLAGS = -lm -lSDL2
+         -Wall -Wextra -std=c99 -I./$(LIBDIR) -D_POSIX_C_SOURCE -D_DEFAULT_SOURCE
+LDFLAGS = -L./$(LIBDIR)/webp -lwebp -lm -lSDL2
 
 .PHONY: release debug clean install uninstall all
 

@@ -57,25 +57,34 @@ typedef struct {
 
 #define imgError(IMG, ERR) ((IMG)->err = ERR)
 
+static void decodeBuffer(Buffer *buf, Image *img) {
+	img->isGif = false;
+	// TODO: Support https://platinumsrc.github.io/docs/formats/ptf/
+
+	// Try decode as webp
+	if ((img->pxs = WebPDecodeRGBA(buf->raw, buf->sz, &img->w, &img->h)) != NULL) return;
+
+	// Try decode as gif
+	if ((img->pxs = stbi_load_gif_from_memory(buf->raw, buf->sz, &img->delays, &img->w, &img->h,
+	                                          &img->len, NULL, 4)) != NULL) {
+		img->isGif = true;
+		return;
+	}
+
+	// Try decode as other formats
+	if ((img->pxs = stbi_load_from_memory(buf->raw, buf->sz, &img->w, &img->h, NULL, 4)) != NULL)
+		return;
+	imgError(img, stbi_failure_reason());
+}
+
 static void *imageLoadingThread(void *data) {
 	Image  *img =  ((ImageThreadData*)data)->img;
 	Buffer *buf = &((ImageThreadData*)data)->buf;
-
-	// TODO: Support https://platinumsrc.github.io/docs/formats/ptf/
-	// Try to load as a gif first, because I don't know how to easily make STB check if it's a gif
-	if ((img->pxs = (uint32_t*)stbi_load_gif_from_memory(buf->raw, buf->sz, &img->delays, &img->w,
-	                                                     &img->h, &img->len, NULL, 4)) == NULL) {
-		// If loading as a gif failed, assume it's not a gif
-		img->isGif = false;
-		if ((img->pxs = (uint32_t*)stbi_load_from_memory(buf->raw, buf->sz, &img->w,
-		                                                 &img->h, NULL, 4)) == NULL)
-			imgError(img, stbi_failure_reason());
-	} else img->isGif = true;
-
+	decodeBuffer(buf, img);
+	freeBuffer(buf);
+ 	free(data);
 	if (img->err == NULL && (img->w <= 0 || img->h <= 0)) imgError(img, "Invalid image dimensions");
 
-	freeBuffer(buf);
-	free(data);
 	lockImage(img);
 	img->loading = false;
 	img->loaded  = img->err == NULL;
@@ -106,10 +115,21 @@ static bool isPathAnImage(const char *path) {
 	struct stat st;
 	if (stat(path, &st) != 0) return false;
 	if (!S_ISREG(st.st_mode)) return false;
+
+	FILE *f = fopen(path, "rb");
+	if (f == NULL) return false;
+
+	Buffer buf;
+	Error  err = readToBufferAtOnce(&buf, f);
+	fclose(f);
+	if (err != NULL) return false;
+
 	/* If we can't even read the size of the image, we assume it is either not an image, or so
 	   corrupted that we just won't classify it as an image */
-	if (!stbi_info(path, NULL, NULL, NULL)) return false;
-	return true;
+	bool isImg = stbi_info_from_memory(buf.raw, buf.sz, NULL, NULL, NULL) ||
+	             WebPGetInfo(buf.raw, buf.sz, NULL, NULL);
+	freeBuffer(&buf);
+	return isImg;
 }
 
 void loadImage(Image *img) {

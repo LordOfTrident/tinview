@@ -1,0 +1,14 @@
+Pre-compiled and copied from https://github.com/webmproject/libwebp because I didn't want a copy of
+such a big repository in tinview. It also compiles examples and their makefile doesnt provide a way
+to disable that as far as I know.
+
+To compile it yourself, use:
+
+$ git clone https://github.com/webmproject/libwebp
+$ cd libwebp
+$ make -f makefile.unix
+
+And then copy these files to this folder:
+
+- src/libwebp.a
+- src/webp/*
