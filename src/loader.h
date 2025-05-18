@@ -31,6 +31,9 @@ typedef struct {
 	bool     isGif;
 	int     *delays, len; // Only for gifs
 
+	bool flipv, fliph; // Vertical and horizontal flip
+	int  rot; // 0 - 3, rot*90 translates to degrees
+
 	/* loading        - Image is currently being loaded in a thread
 	 * loaded         - Image loading has succesfully finished
 	 * deferredUnload - Unload the image when it's finished loading

@@ -231,7 +231,15 @@ static void renderImage(void) {
 		.w = img->w*scale,
 		.h = img->h*scale,
 	};
-	SDL_RenderCopy(ren, imgTex, NULL, &r);
+	SDL_RenderCopyEx(ren, imgTex, NULL, &r, img->rot*90, NULL,
+	                 SDL_FLIP_VERTICAL*img->flipv | SDL_FLIP_HORIZONTAL*img->fliph);
+
+	if (img->rot%2) {
+		r.x = winw/2 - camxt - img->h/2*scale;
+		r.y = winh/2 - camyt - img->w/2*scale;
+		r.w = img->h*scale;
+		r.h = img->w*scale;
+	}
 	switch (conf.img.border) {
 	case BORDERSHADOW:  renderShadow(r);  break;
 	case BORDEROUTLINE: renderOutline(r); break;
@@ -352,8 +360,8 @@ static void setZoom(double z, double ox, double oy) {
 static void resetCamera() {
 	if (!isImageAvailable()) return;
 	if (conf.img.fitOnResize != FITNONE) {
-		double z = (double)img->w/img->h < (double)winw/winh?
-		           (double)winh/img->h : (double)winw/img->w;
+		int w = img->rot%2? img->h : img->w, h = img->rot%2? img->w : img->h;
+		double z = (double)w/h < (double)winw/winh? (double)winh/h : (double)winw/w;
 		setZoom(z > 1 && conf.img.fitOnResize == FITINT? floor(z) : z, 0, 0);
 	}
 	camx = camy = 0;
@@ -416,6 +424,12 @@ static void nextImage(int dir) {
 	hideImage(prepareImage);
 }
 
+static void rotateImage(int dir) {
+	if (imgs.sz == 0) return;
+	if (dir > 0) if (++img->rot > 3)  img->rot = 0;
+	if (dir < 0) if (img->rot-- == 3) img->rot = 3;
+}
+
 static void event(SDL_Event *e) {
 	switch (e->type) {
 	case SDL_QUIT: quit = true; break;
@@ -436,6 +450,10 @@ static void event(SDL_Event *e) {
 			case SDLK_F11:    fullscreen(fullscr = !fullscr); break;
 			case SDLK_LEFT:   nextImage(-1);   break;
 			case SDLK_RIGHT:  nextImage(1);    break;
+			case SDLK_q:      rotateImage(-1); break;
+			case SDLK_e:      rotateImage(1);  break;
+			case SDLK_w: case SDLK_s: if (imgs.sz > 0) img->flipv = !img->flipv; break;
+			case SDLK_a: case SDLK_d: if (imgs.sz > 0) img->fliph = !img->fliph; break;
 			case SDLK_SPACE:
 				if (isImageAvailable()) {
 					if (++filter >= FILTERCOUNT) filter = 0;
@@ -482,7 +500,6 @@ static void event(SDL_Event *e) {
 	case SDL_MOUSEWHEEL:
 		setZoom(zoom + (double)e->wheel.y*zoom*(e->wheel.y > 0? conf.cam.zoomIn : conf.cam.zoomOut),
 		        mx - winw/2, my - winh/2);
-		printf("%f\n", zoom);
 		break;
 	case SDL_DROPFILE:
 		if (!*e->drop.file) break; // Broken on my system, so this prevents it from crashing

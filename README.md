@@ -52,7 +52,7 @@
 </details>
 
 ## Introduction
-*tinview* is a lightweight and minimalist image viewer for Linux. It supports JPG, PNG, BMP,
+**tinview** is a lightweight and minimalist image viewer for Linux. It supports JPG, PNG, BMP,
 HDR, TGA, PIC, PSD, PGM, and PPM images, as well as animated GIFs. The code is only around 1.2k
 lines of C code ([cloc](https://github.com/AlDanial/cloc)'ed), and uses [stb_image](https://github.com/nothings/stb)
 for loading basic image formats, [libwebp](https://github.com/webmproject/libwebp) for loading webp,
@@ -73,8 +73,8 @@ wasn't very smooth, and felt a bit unintuitive. Because of this, I decided I wil
 viewer which will work and look exactly the way I want it to. And so, tinview was born.
 
 ## Pre-requisites
-The only dependency of the program is [SDL2](https://www.libsdl.org/). However, to compile it, you
-will also need [GNU make](https://www.gnu.org/software/make/) and xxd.
+The only external dependency of the program is [SDL2](https://www.libsdl.org/). However, to compile
+it, you will also need [GNU make](https://www.gnu.org/software/make/) and xxd.
 
 ### Debian
 ```
