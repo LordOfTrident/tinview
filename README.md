@@ -52,11 +52,11 @@
 
 ## Introduction
 **tinview** is a lightweight and minimalist image viewer for Linux. It supports JPG, PNG, BMP,
-HDR, TGA, PIC, PSD, PGM, PPM, and PTF images, as well as animated GIFs. The code is only around 1.3k
-lines of C ([cloc](https://github.com/AlDanial/cloc)'ed), and uses [stb_image](https://github.com/nothings/stb)
-for loading basic image formats, [libwebp](https://github.com/webmproject/libwebp) for loading WEBP,
-[lz4](https://github.com/lz4/lz4) for help with loading PTF, [SDL2](https://www.libsdl.org/) for GUI,
-and [tini](https://github.com/lordoftrident/tini) for parsing INI files.
+HDR, TGA, PIC, PSD, PGM, PPM, and [PTF](https://platinumsrc.github.io/docs/formats/ptf/) images, as
+well as animated GIFs. The code is only around 1.3k lines of C ([cloc](https://github.com/AlDanial/cloc)'ed),
+and uses [stb_image](https://github.com/nothings/stb) for loading basic image formats, [libwebp](https://github.com/webmproject/libwebp)
+for loading WEBP, [lz4](https://github.com/lz4/lz4) for help with loading PTF, [SDL2](https://www.libsdl.org/)
+for GUI, and [tini](https://github.com/lordoftrident/tini) for parsing INI files.
 
 When opened, all images passed by command line arguments can be browsed, as well as all images in
 the browsing directory. The browsing directory is the parent directory of the first image provided
