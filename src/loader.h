@@ -19,6 +19,7 @@
 
 #include <stb_image.h>
 #include <webp/decode.h>
+// TODO: libwebp caused tinview size to go from around 100k to 500k
 
 #include "common.h"
 
