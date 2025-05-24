@@ -8,6 +8,7 @@
 	<a href="https://github.com/LordOfTrident/tinview/issues"><img alt="Issues" src="https://img.shields.io/github/issues/LordOfTrident/tinview?labelColor=007652&color=009869&style=flat-square"></a>
 	<a href="https://github.com/LordOfTrident/tinview/pulls"><img alt="Pull requests" src="https://img.shields.io/github/issues-pr/LordOfTrident/tinview?labelColor=5834a4&color=7143d2&style=flat-square"></a>
 	<br><br>
+	<h1>tinview</h1>
 	<p>A pretty and minimalist Linux image viewer</p>
 	<p>
 		<a href="#usage">Usage</a>
