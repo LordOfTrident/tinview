@@ -1,8 +1,8 @@
 <a name="readme-top"></a>
 <div align="center">
-	<img src="./res/thumbnail.png" width="70%">
+	<img src="./res/thumbnail.png" width="500px">
 	<br>
-	<a href="./LICENSE"><img alt="License" src="https://img.shields.io/badge/license-GPL v3-black?labelColor=ad264a&color=de315f&style=flat-square"></a>
+	<a href="./LICENSE"><img alt="License" src="https://img.shields.io/badge/license-GPL_v3-black?labelColor=ad264a&color=de315f&style=flat-square"></a>
 	<a href="https://github.com/LordOfTrident/tinview/graphs/contributors"><img alt="Contributors" src="https://img.shields.io/github/contributors/LordOfTrident/tinview?labelColor=af5c25&color=e07630&style=flat-square"></a>
 	<a href="https://github.com/LordOfTrident/tinview/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/LordOfTrident/tinview?labelColor=a68900&color=d5b000&style=flat-square"></a>
 	<a href="https://github.com/LordOfTrident/tinview/issues"><img alt="Issues" src="https://img.shields.io/github/issues/LordOfTrident/tinview?labelColor=007652&color=009869&style=flat-square"></a>
@@ -57,7 +57,7 @@ the browsing directory. The browsing directory is the parent directory of the fi
 through command line arguments. If no files were provided, the current working directory is used.
 Images are sorted by their names/paths in alphabetical order from A to Z.
 
-<div align="center"><img src="./res/demo.gif" width="70%"></div>
+<div align="center"><img src="./res/demo.gif" width="500px"></div>
 
 ### Why
 I like minimalist and unbloat software, so the image viewer I used before is [feh](https://github.com/derf/feh).
