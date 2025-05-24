@@ -7,6 +7,7 @@
 	<a href="https://github.com/LordOfTrident/tinview/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/LordOfTrident/tinview?labelColor=a68900&color=d5b000&style=flat-square"></a>
 	<a href="https://github.com/LordOfTrident/tinview/issues"><img alt="Issues" src="https://img.shields.io/github/issues/LordOfTrident/tinview?labelColor=007652&color=009869&style=flat-square"></a>
 	<a href="https://github.com/LordOfTrident/tinview/pulls"><img alt="Pull requests" src="https://img.shields.io/github/issues-pr/LordOfTrident/tinview?labelColor=5834a4&color=7143d2&style=flat-square"></a>
+	<br>
 	<p>A pretty and minimalist Linux image viewer</p>
 	<p>
 		<a href="#usage">Usage</a>
@@ -101,18 +102,12 @@ If you find any bugs, please, [create an issue and report them](https://github.c
 
 <br>
 <hr>
-<br>
-
 <div align="center">
 	<img src="./res/icon.png" width="100px">
 	<br>
-	<a href="https://en.wikipedia.org/wiki/C_(programming_language)">
-		<img alt="C99" src="https://img.shields.io/badge/C99-0069a9?style=flat-square&logo=c&logoColor=white">
-	</a>
-	<a href="https://www.libsdl.org/">
-		<img alt="SDL2" src="https://img.shields.io/badge/SDL2-1d4979?style=flat-square&logoColor=white">
-	</a>
-	<p align="center">Made with love <3</p>
+	<a href="https://en.wikipedia.org/wiki/C_(programming_language)"><img alt="C99" src="https://img.shields.io/badge/C99-0069a9?style=flat-square&logo=c&logoColor=white"></a>
+	<a href="https://www.libsdl.org/"><img alt="SDL2" src="https://img.shields.io/badge/SDL2-1d4979?style=flat-square&logoColor=white"></a>
+	<a href="#"><img alt="Made with love" src="https://img.shields.io/badge/Made_with_love-<3-black?labelColor=ad264a&color=de315f&style=flat-square"></a>
 </div>
 
 <p align="right">(<a href="#readme-top">Back to top</a>)</p>
