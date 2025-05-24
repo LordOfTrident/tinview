@@ -113,6 +113,10 @@ If you find any bugs, please, [create an issue and report them](https://github.c
 <div align="center">
 	<img src="./res/icon.png" width="100px">
 	<br>
+	<img src="./res/tinview-badge1.png">
+	<img src="./res/tinview-badge2.png">
+	<img src="./res/tinview-badge3.png">
+	<br>
 	<a href="https://en.wikipedia.org/wiki/C_(programming_language)">
 		<img alt="C99" src="https://img.shields.io/badge/C99-0069a9?style=for-the-badge&logo=c&logoColor=white">
 	</a>

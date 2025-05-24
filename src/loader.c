@@ -100,6 +100,7 @@ static uint8_t *imageReadFile(Image *img, FILE *f, size_t *sz) {
 	return buf;
 }
 
+// TODO: Animated WEBP support
 static void decodeWebp(FILE *f, Image *img) {
 	size_t   sz;
 	uint8_t *buf = imageReadFile(img, f, &sz);
