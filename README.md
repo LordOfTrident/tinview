@@ -21,7 +21,6 @@
 	<img src="./res/tinview-badge2.png">
 	<img src="./res/tinview-badge3.png">
 </div>
-<br>
 
 <details>
 	<summary>Table of contents</summary>
