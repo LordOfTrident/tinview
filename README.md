@@ -1,32 +1,25 @@
 <a name="readme-top"></a>
 <div align="center">
-	<a href="./LICENSE">
-		<img alt="License" src="https://img.shields.io/badge/license-GPL v3-e8415e?style=for-the-badge">
-	</a>
-	<a href="https://github.com/LordOfTrident/tinview/graphs/contributors">
-		<img alt="Contributors" src="https://img.shields.io/github/contributors/LordOfTrident/tinview?style=for-the-badge&color=f36a3b">
-	</a>
-	<a href="https://github.com/LordOfTrident/tinview/stargazers">
-		<img alt="Stars" src="https://img.shields.io/github/stars/LordOfTrident/tinview?style=for-the-badge&color=efb300">
-	</a>
-	<a href="https://github.com/LordOfTrident/tinview/issues">
-		<img alt="Issues" src="https://img.shields.io/github/issues/LordOfTrident/tinview?style=for-the-badge&color=0fae5e">
-	</a>
-	<a href="https://github.com/LordOfTrident/tinview/pulls">
-		<img alt="Pull requests" src="https://img.shields.io/github/issues-pr/LordOfTrident/tinview?style=for-the-badge&color=4f79e4">
-	</a>
-	<br><br><br>
 	<img src="./res/thumbnail.png" width="70%">
-	<p align="center">A pretty and minimalist Linux image viewer</p>
-	<p align="center">
+	<br>
+	<a href="./LICENSE"><img alt="License" src="https://img.shields.io/badge/license-GPL v3-black?labelColor=ad264a&color=de315f&style=flat-square"></a>
+	<a href="https://github.com/LordOfTrident/tinview/graphs/contributors"><img alt="Contributors" src="https://img.shields.io/github/contributors/LordOfTrident/tinview?labelColor=af5c25&color=e07630&style=flat-square"></a>
+	<a href="https://github.com/LordOfTrident/tinview/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/LordOfTrident/tinview?labelColor=a68900&color=d5b000&style=flat-square"></a>
+	<a href="https://github.com/LordOfTrident/tinview/issues"><img alt="Issues" src="https://img.shields.io/github/issues/LordOfTrident/tinview?labelColor=007652&color=009869&style=flat-square"></a>
+	<a href="https://github.com/LordOfTrident/tinview/pulls"><img alt="Pull requests" src="https://img.shields.io/github/issues-pr/LordOfTrident/tinview?labelColor=5834a4&color=7143d2&style=flat-square"></a>
+	<p>A pretty and minimalist Linux image viewer</p>
+	<p>
 		<a href="#usage">Usage</a>
 		·
 		<a href="https://github.com/LordOfTrident/tinview/issues">Report Bug</a>
 		·
 		<a href="https://github.com/LordOfTrident/tinview/issues">Request Feature</a>
 	</p>
-	<br>
+	<img src="./res/tinview-badge1.png">
+	<img src="./res/tinview-badge2.png">
+	<img src="./res/tinview-badge3.png">
 </div>
+<br>
 
 <details>
 	<summary>Table of contents</summary>
@@ -107,23 +100,19 @@ $ man tinview
 If you find any bugs, please, [create an issue and report them](https://github.com/LordOfTrident/tinview/issues).
 
 <br>
-<h1></h1>
+<hr>
 <br>
 
 <div align="center">
 	<img src="./res/icon.png" width="100px">
 	<br>
-	<img src="./res/tinview-badge1.png">
-	<img src="./res/tinview-badge2.png">
-	<img src="./res/tinview-badge3.png">
-	<br>
 	<a href="https://en.wikipedia.org/wiki/C_(programming_language)">
-		<img alt="C99" src="https://img.shields.io/badge/C99-0069a9?style=for-the-badge&logo=c&logoColor=white">
+		<img alt="C99" src="https://img.shields.io/badge/C99-0069a9?style=flat-square&logo=c&logoColor=white">
 	</a>
 	<a href="https://www.libsdl.org/">
-		<img alt="SDL2" src="https://img.shields.io/badge/SDL2-1d4979?style=for-the-badge&logoColor=white">
+		<img alt="SDL2" src="https://img.shields.io/badge/SDL2-1d4979?style=flat-square&logoColor=white">
 	</a>
-	<p align="center">Made with ❤️ love</p>
+	<p align="center">Made with love <3</p>
 </div>
 
 <p align="right">(<a href="#readme-top">Back to top</a>)</p>
