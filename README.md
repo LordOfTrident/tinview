@@ -1,8 +1,6 @@
 <a name="readme-top"></a>
 <div align="center">
-
-# Moved to https://git.gay/rei/tinview
-
+	<h1>Moved to <a href="https://git.gay/rei/tinview">https://git.gay/rei/tinview</a></h1>
 	<img src="./res/thumbnail.png" width="500px">
 	<br>
 	<a href="./LICENSE"><img alt="License" src="https://img.shields.io/badge/license-GPL_v3-black?labelColor=ad264a&color=de315f&style=flat-square"></a>
