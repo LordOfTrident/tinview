@@ -1,3 +1,5 @@
+# Moved to https://git.gay/rei/tinview
+
 <a name="readme-top"></a>
 <div align="center">
 	<img src="./res/thumbnail.png" width="500px">
